@@ -1,15 +1,14 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { MatToolbarModule } from '@angular/material/toolbar';
+
+import { SharedModule } from './shared/shared.module';
 
 @Component({
-  standalone: true,
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  imports: [CommonModule, RouterModule, MatToolbarModule],
+    selector: 'app-root',
+    standalone: true,
+    imports: [SharedModule],
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  title = 'delorean-challenge';
+    title = 'delorean-challenge';
 }

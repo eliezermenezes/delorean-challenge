@@ -1,0 +1,14 @@
+<app-user-form
+    (add)="onAdd($event)"
+    (update)="onUpdate($event)"
+></app-user-form>
+
+<mat-card>
+    <mat-card-content>
+        <app-user-list
+            [users]="users"
+            (delete)="onDelete($event)"
+            (deleteMultiple)="onDeleteMultiple($event)"
+        ></app-user-list>
+    </mat-card-content>
+</mat-card>
