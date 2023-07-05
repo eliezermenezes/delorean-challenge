@@ -1,0 +1,82 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>{{
+            user ? "Atualizar usuário" : "Novo usuário"
+        }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <form [formGroup]="formGroup">
+            <div class="form-fields">
+                <mat-form-field>
+                    <mat-label>Nome completo</mat-label>
+                    <input
+                        matInput
+                        formControlName="name"
+                        placeholder="Ex. Leanne Graham"
+                    />
+
+                    <mat-error
+                        *ngIf="formGroup.get('name')?.getError('required')"
+                    >
+                        Nome is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field>
+                    <mat-label>E-mail</mat-label>
+                    <input
+                        matInput
+                        formControlName="email"
+                        placeholder="Ex. sincere@april.biz"
+                    />
+
+                    <mat-error
+                        *ngIf="formGroup.get('name')?.getError('required')"
+                    >
+                        Nome is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <!-- <div>
+                    <label>Sexo: </label>
+                    <mat-radio-group [formControl]="floatLabelControl">
+                        <mat-radio-button value="auto"
+                            >Masculino</mat-radio-button
+                        >
+                        <mat-radio-button value="always"
+                            >Feminino</mat-radio-button
+                        >
+                    </mat-radio-group>
+                </div> -->
+
+            <!-- <div class="form-fields">
+                <mat-form-field>
+                    <mat-label>Nome completo</mat-label>
+                    <input
+                        matInput
+                        formControlName="name"
+                        placeholder="Ex. Nougat"
+                    />
+
+                    <mat-error
+                        *ngIf="formGroup.get('name')?.getError('required')"
+                    >
+                        Nome is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div> -->
+        </form>
+
+        <!-- <mat-divider></mat-divider> -->
+    </mat-card-content>
+    <mat-card-actions>
+        <!-- <button mat-stroked-button>Primary</button>
+    <button mat-flat-button color="primary">Primary</button> -->
+
+        <button mat-raised-button (click)="onCancel()">Cancelar</button>
+        <button mat-raised-button color="primary" (click)="onSave()">
+            Salvar
+        </button>
+    </mat-card-actions>
+</mat-card>
