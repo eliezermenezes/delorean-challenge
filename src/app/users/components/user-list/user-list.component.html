@@ -1,9 +1,15 @@
 <!-- Remove multiple button -->
-<button *ngIf="selection.selected.length > 0" class="floating-button" mat-mini-fab color="warn" (click)="onDeleteMultiple()">
+<button
+    *ngIf="selection.selected.length > 0"
+    class="floating-button"
+    mat-mini-fab
+    color="warn"
+    (click)="onDeleteMultiple()"
+    data-test="delete-multiple">
     <mat-icon>delete</mat-icon>
 </button>
 
-<table mat-table [dataSource]="users">
+<table mat-table [dataSource]="users" data-test="users">
     <!-- Checkbox Column -->
     <ng-container matColumnDef="select">
         <th mat-header-cell *matHeaderCellDef>
@@ -12,7 +18,8 @@
                 [checked]="selection.hasValue() && isAllSelected()"
                 [indeterminate]="selection.hasValue() && !isAllSelected()"
                 [aria-label]="checkboxLabel()"
-                [disabled]="users.length === 0">
+                [disabled]="users.length === 0"
+                data-test="select-all">
             </mat-checkbox>
         </th>
         <td mat-cell *matCellDef="let row">
@@ -25,40 +32,40 @@
         </td>
     </ng-container>
 
-    <!-- Position Column -->
-    <ng-container matColumnDef="position">
-        <th mat-header-cell *matHeaderCellDef>No.</th>
-        <td mat-cell *matCellDef="let element">
-            {{ element.position }}
-        </td>
-    </ng-container>
-
     <!-- Name Column -->
     <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef>Nome</th>
-        <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+        <td mat-cell *matCellDef="let user" [attr.data-test]="user.name">
+            {{ user.name }}
+        </td>
     </ng-container>
 
-    <!-- Weight Column -->
-    <ng-container matColumnDef="weight">
-        <th mat-header-cell *matHeaderCellDef>Weight</th>
-        <td mat-cell *matCellDef="let element">{{ element.weight }}</td>
-    </ng-container>
-
-    <!-- Symbol Column -->
+    <!-- E-mail Column -->
     <ng-container matColumnDef="email">
         <th mat-header-cell *matHeaderCellDef>E-mail</th>
-        <td mat-cell *matCellDef="let element">{{ element.email }}</td>
+        <td mat-cell *matCellDef="let user" [attr.data-test]="user.email">
+            {{ user.email }}
+        </td>
     </ng-container>
 
     <!-- Actions Column -->
     <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>Ações</th>
-        <td mat-cell *matCellDef="let element">
-            <button mat-icon-button color="primary" (click)="onEdit(element)" [disabled]="selection.selected.length > 0">
+        <td mat-cell *matCellDef="let user" data-test="options">
+            <button
+                mat-icon-button
+                color="primary"
+                (click)="onEdit(user)"
+                [disabled]="selection.selected.length > 0"
+                data-test="edit">
                 <mat-icon>edit</mat-icon>
             </button>
-            <button mat-icon-button color="warn" (click)="onDelete(element)" [disabled]="selection.selected.length > 0">
+            <button
+                mat-icon-button
+                color="warn"
+                (click)="onDelete(user)"
+                [disabled]="selection.selected.length > 0"
+                data-test="delete">
                 <mat-icon>delete</mat-icon>
             </button>
         </td>
@@ -68,7 +75,7 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
     <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell no-data" colspan="4">
+        <td class="mat-cell no-data" colspan="4" data-test="no-data">
             Não há usuários cadastrados
         </td>
     </tr>

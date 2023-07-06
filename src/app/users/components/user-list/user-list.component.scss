@@ -13,7 +13,7 @@ table {
 }
 
 .floating-button {
-    position: absolute;
-    bottom: 172px;
+    position: fixed;
+    margin-top: -36px;
     margin-left: 1rem;
 }

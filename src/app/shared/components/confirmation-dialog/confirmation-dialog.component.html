@@ -2,10 +2,18 @@
     <p>{{ data.msg }}</p>
 </div>
 <div mat-dialog-actions class="dialog-actions">
-    <button mat-raised-button color="primary" (click)="onConfirm(true)">
+    <button
+        mat-raised-button
+        color="primary"
+        (click)="onConfirm(true)"
+        data-test="yes">
         Sim
     </button>
-    <button mat-raised-button color="warn" (click)="onConfirm(false)">
+    <button
+        mat-raised-button
+        color="warn"
+        (click)="onConfirm(false)"
+        data-test="no">
         Não
     </button>
 </div>

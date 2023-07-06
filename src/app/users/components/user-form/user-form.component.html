@@ -9,14 +9,14 @@
         <form [formGroup]="formGroup">
             <section class="d-flex align-items-start">
                 <!-- Name -->
-                <mat-form-field>
+                <mat-form-field data-test="name">
                     <mat-label>Nome completo</mat-label>
                     <input matInput formControlName="name" placeholder="Ex. Leanne Graham">
                     <mat-error>{{ getErrorMessage("name") }}</mat-error>
                 </mat-form-field>
 
                 <!-- E-mail -->
-                <mat-form-field>
+                <mat-form-field data-test="email">
                     <mat-label>E-mail</mat-label>
                     <input matInput formControlName="email" placeholder="Ex. sincere@april.biz">
                     <mat-error>{{ getErrorMessage("email") }}</mat-error>
@@ -24,10 +24,10 @@
             </section>
 
             <!-- Favorite technologies -->
-            <section formArrayName="technologies">
+            <section formArrayName="technologies" data-test="technologies">
                 <h4 class="fw-bolder">Selecione suas tecnologias favoritas:</h4>
                 <div class="row">
-                    <mat-checkbox class="col-md-3 col-sm-6" *ngFor="let technology of technologies; let i = index" [formControlName]="i">
+                    <mat-checkbox class="col-md-3 col-sm-6" *ngFor="let technology of technologies; let i = index" [formControlName]="i" [attr.data-test]="technology">
                         {{ technology }}
                     </mat-checkbox>
                 </div>
@@ -36,7 +36,11 @@
     </mat-card-content>
 
     <mat-card-actions>
-        <button mat-raised-button (click)="onCancel()">Cancelar</button>
-        <button mat-raised-button color="primary" (click)="onSave()">Salvar</button>
+        <button mat-raised-button (click)="onCancel()" data-test="cancel">
+            Cancelar
+        </button>
+        <button mat-raised-button color="primary" (click)="onSave()" data-test="save">
+            Salvar
+        </button>
     </mat-card-actions>
 </mat-card>
