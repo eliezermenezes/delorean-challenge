@@ -18,8 +18,6 @@ export class BaseFormComponent {
             return '';
         }
 
-        const errors = field?.errors;
-
         const messages = new Map()
             .set('required', 'Este campo é obrigatório')
             .set('email', 'Este campo deve ser um e-mail válido')

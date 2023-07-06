@@ -1,5 +1,6 @@
 table {
     width: 100%;
+    min-width: max-content;
 
     .mat-column-actions {
         width: 128px;
@@ -9,4 +10,10 @@ table {
         text-align: center;
         padding-top: 10px;
     }
+}
+
+.floating-button {
+    position: absolute;
+    bottom: 172px;
+    margin-left: 1rem;
 }

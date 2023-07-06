@@ -1,7 +1,6 @@
 <!-- Remove multiple button -->
-<button *ngIf="selection.selected.length > 0" mat-button color="warn" (click)="onDeleteMultiple()">
-    <mat-icon>close</mat-icon>
-    Deletar selecionados
+<button *ngIf="selection.selected.length > 0" class="floating-button" mat-mini-fab color="warn" (click)="onDeleteMultiple()">
+    <mat-icon>delete</mat-icon>
 </button>
 
 <table mat-table [dataSource]="users">
