@@ -1,9 +1,5 @@
-<button
-    *ngIf="selection.selected.length > 0"
-    mat-button
-    color="warn"
-    (click)="onDeleteMultiple()"
->
+<!-- Remove multiple button -->
+<button *ngIf="selection.selected.length > 0" mat-button color="warn" (click)="onDeleteMultiple()">
     <mat-icon>close</mat-icon>
     Deletar selecionados
 </button>
@@ -17,8 +13,7 @@
                 [checked]="selection.hasValue() && isAllSelected()"
                 [indeterminate]="selection.hasValue() && !isAllSelected()"
                 [aria-label]="checkboxLabel()"
-                [disabled]="users.length === 0"
-            >
+                [disabled]="users.length === 0">
             </mat-checkbox>
         </th>
         <td mat-cell *matCellDef="let row">
@@ -26,8 +21,7 @@
                 (click)="$event.stopPropagation()"
                 (change)="$event ? selection.toggle(row) : null"
                 [checked]="selection.isSelected(row)"
-                [aria-label]="checkboxLabel(row)"
-            >
+                [aria-label]="checkboxLabel(row)">
             </mat-checkbox>
         </td>
     </ng-container>
@@ -58,24 +52,14 @@
         <td mat-cell *matCellDef="let element">{{ element.email }}</td>
     </ng-container>
 
+    <!-- Actions Column -->
     <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>Ações</th>
         <td mat-cell *matCellDef="let element">
-            <button
-                mat-icon-button
-                color="primary"
-                aria-label="Example icon button with a plus one icon"
-                (click)="onEdit(element)"
-                [disabled]="selection.selected.length > 0"
-            >
+            <button mat-icon-button color="primary" (click)="onEdit(element)" [disabled]="selection.selected.length > 0">
                 <mat-icon>edit</mat-icon>
             </button>
-            <button
-                mat-icon-button
-                color="warn"
-                (click)="onDelete(element)"
-                [disabled]="selection.selected.length > 0"
-            >
+            <button mat-icon-button color="warn" (click)="onDelete(element)" [disabled]="selection.selected.length > 0">
                 <mat-icon>delete</mat-icon>
             </button>
         </td>

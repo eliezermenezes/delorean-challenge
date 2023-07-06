@@ -1,5 +1,5 @@
 mat-card {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 
     mat-card-content {
         form {
@@ -15,20 +15,21 @@ mat-card {
                     width: 100%;
                 }
             }
-
-            .form-fields {
-                display: flex;
-                align-items: flex-start;
-            }
         }
     }
 
     mat-card-actions {
         display: flex;
         justify-content: end;
+        padding-bottom: 16px;
 
         button {
             margin-right: 8px;
         }
     }
+}
+
+h4,
+mat-error {
+    font-weight: 500;
 }

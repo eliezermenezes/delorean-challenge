@@ -9,6 +9,4 @@ import { SharedModule } from './shared/shared.module';
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
-    title = 'delorean-challenge';
-}
+export class AppComponent {}

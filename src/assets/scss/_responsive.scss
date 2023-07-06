@@ -1,0 +1,32 @@
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.align-items-start {
+    align-items: flex-start;
+}
+
+.justify-content-between {
+    justify-content: space-between;
+}
+
+@each $breakpoint in map-keys($grid-breakpoints) {
+    @include media-breakpoint-up($breakpoint) {
+        .col-#{$breakpoint}-auto {
+            flex: 0 0 auto;
+            width: auto;
+            max-width: none;
+        }
+
+        @for $i from 1 through 12 {
+            .col-#{$breakpoint}-#{$i} {
+                @include col-width($i);
+            }
+        }
+    }
+}

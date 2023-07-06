@@ -1,6 +1,5 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CONSTANTS } from 'src/app/core/constants';
 import { EventEmitterType } from 'src/app/core/enums/event-emitter.enum';
 import { DialogService } from 'src/app/shared/services/dialog.service';
 import { EventEmitterService } from 'src/app/shared/services/event-emitter.service';
@@ -18,9 +17,6 @@ import { UsersService } from '../../services/users.service';
     styleUrls: ['./user-list.component.scss'],
 })
 export class UserListComponent {
-    @Output() delete = new EventEmitter<User>();
-    @Output() deleteMultiple = new EventEmitter<User[]>();
-
     readonly displayedColumns: string[] = [
         'select',
         'name',
@@ -29,6 +25,9 @@ export class UserListComponent {
     ];
 
     @Input() users: User[] = [];
+
+    @Output() delete = new EventEmitter<User>();
+    @Output() deleteMultiple = new EventEmitter<User[]>();
 
     selection = new SelectionModel<User>(true, []);
 
@@ -56,21 +55,7 @@ export class UserListComponent {
         if (!row) {
             return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
         }
-        return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${
-            row.id + 1
-        }`;
-    }
-
-    openDialog(): void {
-        // const dialogRef = this._dialog.open(ConfirmationDialogComponent, {
-        //     data: 'Deseja realmente excluir os usuários selecionados?',
-        // });
-
-        // dialogRef.afterClosed().subscribe((result: boolean) => {});
-
-        this._dialog.openDialog('tem certeza?').subscribe((result: boolean) => {
-            console.log(result);
-        });
+        return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
     }
 
     onEdit(user: User): void {
@@ -79,7 +64,7 @@ export class UserListComponent {
 
     onDelete(user: User): void {
         this._dialog
-            .openDialog(CONSTANTS.MSG.CONFIRM_DELETE_USER)
+            .confirm('Deseja realmente excluir o usuário?')
             .subscribe((result: boolean) => {
                 if (result) {
                     this.delete.emit(user);
@@ -89,7 +74,7 @@ export class UserListComponent {
 
     onDeleteMultiple(): void {
         this._dialog
-            .openDialog(CONSTANTS.MSG.CONFIRM_DELETE_USERS)
+            .confirm('Deseja realmente excluir os usuários selecionados?')
             .subscribe((result: boolean) => {
                 if (result) {
                     this.deleteMultiple.emit(this.selection.selected);

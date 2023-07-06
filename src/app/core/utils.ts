@@ -5,4 +5,8 @@ export class Utils {
         }
         return 1;
     }
+
+    static scrollToTop(): void {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 }
