@@ -1,4 +1,4 @@
-import { AfterContentChecked, Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { BaseFormComponent } from 'src/app/core/base/base.form.component';
 import { EventEmitterType } from 'src/app/core/enums/event-emitter.enum';
@@ -15,7 +15,7 @@ import { User } from '../../models/user';
     templateUrl: './user-form.component.html',
     styleUrls: ['./user-form.component.scss'],
 })
-export class UserFormComponent extends BaseFormComponent implements AfterContentChecked {
+export class UserFormComponent extends BaseFormComponent {
     readonly technologies = [
         'Angular',
         'React',
@@ -40,10 +40,6 @@ export class UserFormComponent extends BaseFormComponent implements AfterContent
                 this._updateFormGroup();
             }
         );
-    }
-
-    ngAfterContentChecked(): void {
-        Utils.scrollToTop();
     }
 
     private get _statesTechnologies(): boolean[] {
@@ -82,6 +78,7 @@ export class UserFormComponent extends BaseFormComponent implements AfterContent
             email: this.user?.email,
             technologies: this._statesTechnologies,
         });
+        Utils.scrollToTop();
     }
 
     onSave() {
