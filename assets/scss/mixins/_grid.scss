@@ -1,0 +1,6 @@
+@use "sass:math";
+
+@mixin col-width($size) {
+    flex: 0 0 percentage(math.div($size, 12));
+    max-width: percentage(math.div($size, 12));
+}
