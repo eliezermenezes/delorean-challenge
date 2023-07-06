@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { CONSTANTS } from 'src/app/core/constants';
 import { SharedModule } from 'src/app/shared/shared.module';
 
 import { UserFormComponent } from '../../components/user-form/user-form.component';
@@ -39,19 +38,19 @@ export class UsersComponent {
     onAdd(user: User): void {
         this._usersService.add(user);
         this._onPopulate();
-        this._openSnackBar(CONSTANTS.MSG.CREATED_USER);
+        this._openSnackBar('Usuário cadastrado com sucesso!');
     }
 
     onUpdate(user: User): void {
         this._usersService.edit(user);
         this._onPopulate();
-        this._openSnackBar(CONSTANTS.MSG.UPDATED_USER);
+        this._openSnackBar('Usuário atualizado com sucesso!');
     }
 
     onDelete(user: User): void {
         this._usersService.delete(user);
         this._onPopulate();
-        this._openSnackBar(CONSTANTS.MSG.DELETED_USER);
+        this._openSnackBar('Usuário deletado com sucesso!');
     }
 
     onDeleteMultiple(users: User[]): void {
@@ -59,6 +58,6 @@ export class UsersComponent {
             this._usersService.delete(user);
         }
         this._onPopulate();
-        this._openSnackBar(CONSTANTS.MSG.DELETED_USERS);
+        this._openSnackBar('Usuários deletados com sucesso!');
     }
 }

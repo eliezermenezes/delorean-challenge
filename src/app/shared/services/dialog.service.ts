@@ -10,7 +10,7 @@ import { ConfirmationDialogComponent } from '../components/confirmation-dialog/c
 export class DialogService {
     constructor(public dialog: MatDialog) {}
 
-    openDialog(msg: string): Observable<boolean> {
+    confirm(msg: string): Observable<boolean> {
         const subject = new Subject<boolean>();
 
         this.dialog.open(ConfirmationDialogComponent, {

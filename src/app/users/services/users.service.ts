@@ -1,4 +1,3 @@
-// import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Utils } from 'src/app/core/utils';
 
@@ -25,7 +24,6 @@ export class UsersService {
     edit(user: User): void {
         const users = this.list();
         const index = users.findIndex((u) => u.id === user.id);
-        console.log(index);
         users[index] = user;
         this._storage.set('users', users);
     }
