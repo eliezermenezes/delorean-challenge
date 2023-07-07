@@ -1,0 +1,246 @@
+name: Automated Tests
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  # build-using-ngrok:
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v2
+
+  #     - name: Setup Node
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: 18
+
+  #     - name: Install Dependencies
+  #       run: npm install
+
+  #     - name: Start Server
+  #       run: npm start &
+
+  #     - name: Start ngrok
+  #       uses: apogiatzis/ngrok-tunneling-action@v0.1.4
+  #       with:
+  #         ngrok_authtoken: ${{ secrets.NGROK_AUTH_TOKEN }}
+  #         port: 4200
+  #     # -----------------------------------------------------------------------------------------
+  #     # Use esse passo para obter a URL pública do ngrok
+  #     # Esse trecho de código deve ser usado antes do passo "Run Automated Tests"
+  #     # Então recorte-o daqui e cole no lugar correto
+  #     # Só depois pegue "${{ steps.ngrok.outputs.url }}" e passe como parâmetro no comando "robot"
+  #     # -----------------------------------------------------------------------------------------
+  #     - name: Get ngrok public URL
+  #       id: ngrok
+  #       run: echo ::set-output name=url::$(curl -s localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url')
+
+  #
+  # Esse job usa o actions/upload-artifact para armazenar os arquivos compilados para serem baixados no job de "test"
+  # Isso porque cada job é executado em uma máquina diferente, então não dá de executar a aplicação no local e tentar acessar de outro job
+  #
+  # buid-using-artifact:
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v2
+
+  #     - name: Setup Node
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: 18
+
+  #     - name: Install Dependencies
+  #       run: npm install
+
+  #     - name: Build Application
+  #       run: npm run build -- --configuration production
+
+  #     - name: Archive Build Artifacts
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: Build
+  #         path: ./dist/delorean-challenge
+
+  #     # -----------------------------------------------------------------------------------------
+  #     # Use esses passos para obter os arquivos gerados pelo build e levantar a aplicação usando o "http-server"
+  #     # Esses trechos de código deve ser usado antes do passo "Run Automated Tests"
+  #     # Então recorte-os daqui e cole no lugar correto
+  #     # Só depois pegue "http://localhost:4200" e passe como parâmetro no comando "robot"
+  #     # -----------------------------------------------------------------------------------------
+  #     - name: Download Build Artifacts
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         name: Build
+
+  #     - name: Start Application Server
+  #       run: npx http-server -p 4200 -d false -c-1 ./dist/delorean-challenge
+
+  #     - name: Wait for Application Server
+  #       run: npx wait-on http://localhost:4200
+
+  # build:
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v2
+
+  #     - name: Setup Node
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: 18
+
+  #     - name: Install Dependencies
+  #       run: npm install
+
+  #     # Using NGROK
+  #     - name: Start Server
+  #       run: npm start &
+
+  #     - name: Build Application
+  #       run: npm run build -- --configuration production
+
+  #     - name: Start Temporary Web Server
+  #       run: npx http-server -p 8000 -c-1 dist/delorean-challenge &
+
+  webdriver:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup Chrome WebDriver
+        uses: nanasess/setup-chromedriver@v2
+
+  # test:
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - build
+  #     - webdriver
+  #   env:
+  #     AUTOMATION_PROJECT_NAME: delorean-challenge-automation
+  #     # CI_SERVER_HOST: host.docker.internal
+  #     # CI_SERVER_PORT: 4200
+
+  #   services:
+  #     selenium:
+  #       image: selenium/standalone-chrome:latest
+  #       options: --shm-size=2g
+
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v2
+
+  #     - name: Setup Python 3.8
+  #       uses: actions/setup-python@v2
+  #       with:
+  #         python-version: 3.8
+
+  #     - name: Clone Automation Project
+  #       run: git clone https://github.com/eliezermenezes/${{ env.AUTOMATION_PROJECT_NAME }}.git
+
+  #     - name: Install Dependencies
+  #       run: |
+  #         cd ${{ env.AUTOMATION_PROJECT_NAME }}
+  #         pip install -r requirements.txt
+
+  #     # - name: Get ngrok public URL
+  #     #   id: ngrok
+  #     #   run: echo "::set-output name=url::$(curl -s localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url')"
+
+  #     - name: Get Temporary Web Server
+  #       id: web-server
+  #       run: echo ::set-output name=url::http://localhost:8000
+
+  #     - name: Run Automated Tests
+  #       run: |
+  #         cd ${{ env.AUTOMATION_PROJECT_NAME }}
+  #         robot -d results -v BROWSER:headlesschrome -v URL:${{ steps.web-server.outputs.url }} tests
+
+  #     - name: Save Test Report
+  #       if: always()
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: Test Report
+  #         path: ./${{ env.AUTOMATION_PROJECT_NAME }}/results
+
+  #
+  # Esse job faz o build e testa a aplicação tudo junto
+  # Primeiro executa npm start para rodar a aplicação e depois executa os testes
+  # Não gosto dessa abordagem
+  #
+  build-and-test:
+    runs-on: ubuntu-latest
+    needs:
+      - webdriver
+    env:
+      AUTOMATION_PROJECT_NAME: delorean-challenge-automation
+
+    services:
+      selenium:
+        image: selenium/standalone-chrome:latest
+        options: --shm-size=2g
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install
+      # -----------------------------------------------------------------------------------------
+      # Esse passo levanta a aplicação e deixa ela rodando em background no endereço http://localhost:4200
+      # Aqui é usado o "npm start" para levantar a aplicação
+      # Mas, caso opte por fazer o build e testar a aplicação usando o "http-server", comente esse passo
+      # -----------------------------------------------------------------------------------------
+      # - name: Start Server
+      #   run: npm start &
+      # FIM - NPM START
+
+      # -----------------------------------------------------------------------------------------
+      # Esse passo faz o build da aplicação e deixa ela rodando em background no endereço http://localhost:4200
+      # Aqui é usado o "http-server" para levantar a aplicação
+      # Mas, caso opte por levantar a aplicação usando "npm start", comente esses passos
+      # -----------------------------------------------------------------------------------------
+      - name: Build Application
+        run: npm run build -- --configuration production
+
+      - name: Start Temporary Web Server
+        run: npx http-server ./dist/delorean-challenge -p 4200 &
+      # FIM - HTTP-SERVER
+
+      - name: Setup Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Clone Automation Project
+        run: git clone https://github.com/eliezermenezes/${{ env.AUTOMATION_PROJECT_NAME }}.git
+
+      - name: Install Dependencies
+        run: |
+          cd ${{ env.AUTOMATION_PROJECT_NAME }}
+          pip install -r requirements.txt
+
+      - name: Run Automated Tests
+        run: |
+          cd ${{ env.AUTOMATION_PROJECT_NAME }}
+          robot -d results -v BROWSER:headlesschrome -v URL:http://localhost:4200 tests
+
+      - name: Save Test Report
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: Test Report
+          path: ./${{ env.AUTOMATION_PROJECT_NAME }}/results
