@@ -1,4 +1,4 @@
-name: Automated Tests
+name: Automated Tests Together
 
 on:
   push:
@@ -22,6 +22,24 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Start Server
+        run: npm start &
+
+      # Caso queira fazer o build da aplicação e servir usando o "http-server", descomente os passos abaixo
+      # - name: Build Application
+      #   run: npm run build -- --configuration production
+
+      # - name: Start Temporary Web Server
+      #   run: npx http-server ./dist/delorean-challenge -p 4200 &
+
       - name: Setup Python 3.8
         uses: actions/setup-python@v2
         with:
@@ -36,7 +54,7 @@ jobs:
 
       - name: Run Automated Tests
         working-directory: ${{ vars.CI_AUTOMATION_PROJECT_NAME }}
-        run: robot -d results -v BROWSER:headlesschrome tests
+        run: robot -d results -v BROWSER:headlesschrome -v URL:http://localhost:4200 tests
 
       - name: Save Test Report
         if: always()

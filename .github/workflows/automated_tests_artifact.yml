@@ -1,4 +1,4 @@
-name: Automated Tests
+name: Automated Tests Using Artifact
 
 on:
   push:
@@ -10,8 +10,34 @@ on:
       - master
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Application
+        run: npm run build -- --configuration production
+
+      - name: Archive Build Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Build
+          path: ./dist/delorean-challenge
+
   test:
     runs-on: ubuntu-latest
+    needs:
+      - build
 
     services:
       selenium:
@@ -21,6 +47,15 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: Build
+          path: dist/delorean-challenge
+
+      - name: Start Application Server
+        run: npx http-server -p 4200 -d false -c-1 ./dist/delorean-challenge &
 
       - name: Setup Python 3.8
         uses: actions/setup-python@v2
@@ -36,7 +71,7 @@ jobs:
 
       - name: Run Automated Tests
         working-directory: ${{ vars.CI_AUTOMATION_PROJECT_NAME }}
-        run: robot -d results -v BROWSER:headlesschrome tests
+        run: robot -d results -v BROWSER:headlesschrome -v URL:http://localhost:4200 tests
 
       - name: Save Test Report
         if: always()
