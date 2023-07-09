@@ -1,7 +1,7 @@
 name: Automated Tests Using Pabot
 
 on:
-  pull_request:
+  push:
     branches:
       - master
 
@@ -48,3 +48,14 @@ jobs:
         with:
           name: Test Report
           path: ./${{ env.automation-directory }}/results
+
+      - name: Send Telegram Notification
+        if: always()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            Status: ${{ job.status }}
+            See Jobs: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          document: ${{ github.workspace }}/${{ env.automation-directory }}/results/output.xml
