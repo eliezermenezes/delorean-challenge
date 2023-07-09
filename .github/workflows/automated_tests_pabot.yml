@@ -1,22 +1,25 @@
-name: Automated Tests
+name: Automated Tests Using Pabot
 
 on:
-  push:
+  pull_request:
     branches:
-      - dev
-
-  # pull_request:
-  #   branches:
-  #     - master
+      - master
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
-    # services:
-    #   selenium:
-    #     image: selenium/standalone-chrome:latest
-    #     options: --shm-size=2g
+    env:
+      automation-directory: ${{ vars.CI_AUTOMATION_PROJECT_NAME }}
+
+    defaults:
+      run:
+        working-directory: ${{ env.automation-directory }}
+
+    services:
+      selenium:
+        image: selenium/standalone-firefox:latest
+        options: --shm-size=2g
 
     steps:
       - name: Checkout Repository
@@ -28,24 +31,20 @@ jobs:
           python-version: 3.8
 
       - name: Clone Automation Project
+        working-directory: ${{ github.workspace }}
         run: git clone ${{ vars.CI_AUTOMATION_PROJECT_URL }}
 
       - name: Install Dependencies
-        working-directory: ${{ vars.CI_AUTOMATION_PROJECT_NAME }}
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          pip install robotframework-pabot==2.16.0
 
       - name: Run Automated Tests
-        working-directory: ${{ vars.CI_AUTOMATION_PROJECT_NAME }}
-        uses: joonvena/robotframework-docker-action@v1.0
-        with:
-          browser: "firefox"
-          robot_threads: 2
-          robot_tests_dir: tests
-          robot_reports_dir: results
+        run: pabot --processes 2 --outputdir results --variable BROWSER:headlessfirefox tests
 
       - name: Save Test Report
         if: always()
         uses: actions/upload-artifact@v2
         with:
           name: Test Report
-          path: ./${{ vars.CI_AUTOMATION_PROJECT_NAME }}/results
+          path: ./${{ env.automation-directory }}/results
