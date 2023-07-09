@@ -1,0 +1,51 @@
+name: Automated Tests
+
+on:
+  push:
+    branches:
+      - dev
+
+  # pull_request:
+  #   branches:
+  #     - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    # services:
+    #   selenium:
+    #     image: selenium/standalone-chrome:latest
+    #     options: --shm-size=2g
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Clone Automation Project
+        run: git clone ${{ vars.CI_AUTOMATION_PROJECT_URL }}
+
+      - name: Install Dependencies
+        working-directory: ${{ vars.CI_AUTOMATION_PROJECT_NAME }}
+        run: pip install -r requirements.txt
+
+      - name: Run Automated Tests
+        working-directory: ${{ vars.CI_AUTOMATION_PROJECT_NAME }}
+        uses: joonvena/robotframework-docker-action@v1.0
+        with:
+          browser: "firefox"
+          robot_threads: 2
+          robot_tests_dir: tests
+          robot_reports_dir: results
+
+      - name: Save Test Report
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: Test Report
+          path: ./${{ vars.CI_AUTOMATION_PROJECT_NAME }}/results
