@@ -1,10 +1,6 @@
 name: Automated Tests
 
 on:
-  # push:
-  #   branches:
-  #     - master
-
   pull_request:
     branches:
       - master
@@ -19,23 +15,20 @@ jobs:
         options: --shm-size=2g
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout Repository at delorean-challenge-automation-e2e
         uses: actions/checkout@v2
+        with:
+          repository: eliezermenezes/delorean-challenge-automation-e2e
 
       - name: Setup Python 3.8
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
 
-      - name: Clone Automation Project
-        run: git clone ${{ vars.CI_AUTOMATION_PROJECT_URL }}
-
       - name: Install Dependencies
-        working-directory: ${{ vars.CI_AUTOMATION_PROJECT_NAME }}
         run: pip install -r requirements.txt
 
       - name: Run Automated Tests
-        working-directory: ${{ vars.CI_AUTOMATION_PROJECT_NAME }}
         run: robot -d results -v BROWSER:headlesschrome tests
 
       - name: Save Test Report
@@ -43,4 +36,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Test Report
-          path: ./${{ vars.CI_AUTOMATION_PROJECT_NAME }}/results
+          path: results

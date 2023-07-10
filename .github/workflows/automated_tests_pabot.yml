@@ -1,7 +1,7 @@
 name: Automated Tests Using Pabot
 
 on:
-  push:
+  pull_request:
     branches:
       - master
 
@@ -9,30 +9,21 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    env:
-      automation-directory: ${{ vars.CI_AUTOMATION_PROJECT_NAME }}
-
-    defaults:
-      run:
-        working-directory: ${{ env.automation-directory }}
-
     services:
       selenium:
         image: selenium/standalone-firefox:latest
         options: --shm-size=2g
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout Repository at delorean-challenge-automation-e2e
         uses: actions/checkout@v2
+        with:
+          repository: eliezermenezes/delorean-challenge-automation-e2e
 
       - name: Setup Python 3.8
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
-
-      - name: Clone Automation Project
-        working-directory: ${{ github.workspace }}
-        run: git clone ${{ vars.CI_AUTOMATION_PROJECT_URL }}
 
       - name: Install Dependencies
         run: |
@@ -47,7 +38,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Test Report
-          path: ./${{ env.automation-directory }}/results
+          path: results
 
       - name: Send Telegram Notification
         if: always()
@@ -58,4 +49,4 @@ jobs:
           message: |
             Status: ${{ job.status }}
             See Jobs: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          document: ${{ github.workspace }}/${{ env.automation-directory }}/results/output.xml
+          document: results/output.xml
