@@ -1,0 +1,96 @@
+name: Visual Regression Testing
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  reference:
+    runs-on: ubuntu-latest
+
+    env:
+      automation_directory: ${{ vars.CI_BACKSTOP_AUTOMATION_PROJECT_NAME }}
+
+    steps:
+      - name: Checkout Repository at v1.0
+        uses: actions/checkout@v2
+        with:
+          ref: v1.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Start Server
+        run: npm start &
+
+      - name: Clone Automation Project
+        run: git clone ${{ vars.CI_BACKSTOP_AUTOMATION_PROJECT_URL }}
+
+      - name: Install Dependencies
+        working-directory: ${{ env.automation_directory }}
+        run: npm install
+
+      - name: Run Backstop Reference
+        working-directory: ${{ env.automation_directory }}
+        run: npm run reference
+
+      - name: Upload Reference Images
+        if: success()
+        uses: actions/upload-artifact@v2
+        with:
+          name: Reference Images
+          path: ./${{ env.automation_directory }}/backstop_data/bitmaps_reference
+
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      automation_directory: ${{ vars.CI_BACKSTOP_AUTOMATION_PROJECT_NAME }}
+
+    needs:
+      - reference
+
+    steps:
+      - name: Checkout Repository at ${{ github.ref }}
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Start Server
+        run: npm start &
+
+      - name: Clone Automation Project
+        run: git clone ${{ vars.CI_BACKSTOP_AUTOMATION_PROJECT_URL }}
+
+      - name: Download Reference Images
+        uses: actions/download-artifact@v2
+        with:
+          name: Reference Images
+          path: ./${{ env.automation_directory }}/backstop_data/bitmaps_reference
+
+      - name: Install Dependencies
+        working-directory: ${{ env.automation_directory }}
+        run: npm install
+
+      - name: Run Backstop Test
+        working-directory: ${{ env.automation_directory }}
+        run: npm run test
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: Regression Test Results
+          path: ./${{ env.automation_directory }}/backstop_data/html_report
