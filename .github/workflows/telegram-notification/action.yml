@@ -1,0 +1,38 @@
+name: Telegram Notification
+description: Send Telegram Notification
+inputs:
+  to:
+    description: "Telegram chat id or channel id"
+    required: true
+    type: string
+  token:
+    description: "Telegram bot token"
+    required: true
+    type: string
+  run_id:
+    description: "Run identifier for the job that just finishe"
+    required: true
+    type: string
+  job_status:
+    description: "Job status"
+    required: true
+    type: string
+  document:
+    description: "Document path for telegram notification"
+    required: true
+    type: string
+
+runs:
+  using: composite
+
+  steps:
+    - name: Send Telegram Notification
+      if: always()
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ inputs.to }}
+        token: ${{ inputs.token }}
+        message: |
+          Status: ${{ inputs.job_status }}
+          See Jobs: https://github.com/${{ github.repository }}/actions/runs/${{ inputs.run_id }}
+        document: ${{ inputs.document }}

@@ -94,3 +94,12 @@ jobs:
         with:
           name: Regression Test Results
           path: ./${{ env.automation_directory }}/backstop_data/html_report
+
+      - name: Trigger Telegram Notification
+        uses: ./.github/workflows/telegram-notification
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          run_id: ${{ github.run_id }}
+          job_status: ${{ job.status }}
+          document: ./${{ env.automation_directory }}/backstop_data/ci_report/xunit.xml
